@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Annoyed Switch</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111827;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #e5e7eb;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .switch-wrapper {
+      position: relative;
+      width: 200px;
+      height: 100px;
+      margin: 0 auto 20px;
+      border-radius: 999px;
+      background: #374151;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      cursor: pointer;
+      transition: background 0.25s ease;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .switch-wrapper.on {
+      background: #10b981;
+    }
+
+    .bubble {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #f9fafb;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+      transform: translateX(0);
+      transition: transform 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #111827;
+      user-select: none;
+    }
+
+    .switch-wrapper.on .bubble {
+      transform: translateX(100px);
+    }
+
+    .label {
+      min-height: 1.5em;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="switch" class="switch-wrapper">
+      <div class="bubble">⚡</div>
+    </div>
+    <div id="label" class="label"></div>
+  </div>
+
+  <script>
+    const switchEl = document.getElementById('switch');
+    const labelEl = document.getElementById('label');
+
+    let isOn = false;
+    let flipCount = 0;
+    let youtubeOpened = false;
+
+    function updateLabel() {
+      if (!isOn) {
+        labelEl.textContent = '';
+        return;
+      }
+
+      if (flipCount < 5) {
+        labelEl.textContent = 'no';
+      } else if (flipCount === 5) {
+        labelEl.textContent = 'Stop.';
+      } else if (flipCount > 5 && !youtubeOpened) {
+        labelEl.textContent = 'Stop pressing the switch. Watch some YouTube.';
+      } else if (youtubeOpened) {
+        labelEl.textContent = 'Seriously. I\'m closing.';
+      }
+    }
+
+    function autoOff(delay = 600) {
+      setTimeout(() => {
+        isOn = false;
+        switchEl.classList.remove('on');
+        updateLabel();
+      }, delay);
+    }
+
+    switchEl.addEventListener('click', () => {
+      // If we already opened YouTube and they flip again, close the window
+      if (youtubeOpened) {
+        window.close();
+        return;
+      }
+
+      isOn = !isOn;
+
+      if (isOn) {
+        flipCount++;
+        switchEl.classList.add('on');
+        updateLabel();
+
+        if (flipCount < 5) {
+          autoOff();
+        } else if (flipCount === 5) {
+          autoOff(900);
+        } else if (flipCount > 5 && !youtubeOpened) {
+          // Open YouTube once
+          youtubeOpened = true;
+          updateLabel();
+          window.open('https://www.youtube.com', '_blank');
+          autoOff(900);
+        }
+      } else {
+        switchEl.classList.remove('on');
+        updateLabel();
+      }
+    });
+  </script>
+</body>
+</html>
