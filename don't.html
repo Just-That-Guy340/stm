@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Horror Switch</title>
+
+  <!-- Horror Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      font-family: 'Creepster', cursive;
+      color: #ff0000;
+      letter-spacing: 2px;
+      user-select: none;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .switch-wrapper {
+      position: relative;
+      width: 260px;
+      height: 130px;
+      margin: 0 auto 20px;
+      border-radius: 999px;
+      background: #111;
+      border: 4px solid #300;
+      box-shadow: 0 0 25px #400 inset, 0 0 40px #000;
+      cursor: pointer;
+      transition: background 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .switch-wrapper.on {
+      background: #300;
+      box-shadow: 0 0 40px #900 inset, 0 0 50px #600;
+    }
+
+    .bubble {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #000;
+      border: 3px solid #900;
+      box-shadow: 0 0 20px #900;
+      transform: translateX(0);
+      transition: transform 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      color: #ff0000;
+    }
+
+    .switch-wrapper.on .bubble {
+      transform: translateX(130px);
+    }
+
+    .label {
+      min-height: 1.5em;
+      font-size: 2rem;
+      text-shadow: 0 0 10px #f00;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="switch" class="switch-wrapper">
+      <div class="bubble">☠️</div>
+    </div>
+    <div id="label" class="label"></div>
+  </div>
+
+  <script>
+    const switchEl = document.getElementById('switch');
+    const labelEl = document.getElementById('label');
+
+    let isOn = false;
+    let flipCount = 0;
+    let youtubeOpened = false;
+    let meltdown = false;
+
+    function say(text) {
+      labelEl.textContent = text;
+    }
+
+    function autoOff(delay = 1000) {
+      setTimeout(() => {
+        isOn = false;
+        switchEl.classList.remove('on');
+        say("");
+      }, delay);
+    }
+
+    function violentMeltdown() {
+      meltdown = true;
+      say("STOP DOING THIS");
+
+      let flips = 0;
+      let interval = setInterval(() => {
+        flips++;
+        switchEl.classList.toggle('on');
+        if (flips >= 60) {
+          clearInterval(interval);
+          window.close();
+        }
+      }, 80);
+    }
+
+    switchEl.addEventListener('click', () => {
+      if (meltdown) return;
+
+      isOn = !isOn;
+
+      if (isOn) {
+        flipCount++;
+        switchEl.classList.add('on');
+
+        // FIRST CLICK
+        if (flipCount === 1) {
+          say("No");
+          autoOff();
+        }
+
+        // SECOND CLICK
+        else if (flipCount === 2) {
+          say("Stop pressing the button");
+          autoOff();
+        }
+
+        // THIRD CLICK → OPEN YOUTUBE TABS
+        else if (flipCount === 3 && !youtubeOpened) {
+          youtubeOpened = true;
+          say("...");
+          setTimeout(() => {
+            window.open("https://www.youtube.com/watch?v=m5qI5k0Q8a0", "_blank"); // ocean
+            window.open("https://www.youtube.com/watch?v=1JmG2gRRFp0", "_blank"); // classical piano
+            autoOff();
+          }, 1000);
+        }
+
+        // FOURTH CLICK → MELTDOWN
+        else if (flipCount === 4) {
+          violentMeltdown();
+        }
+
+      } else {
+        switchEl.classList.remove('on');
+        say("");
+      }
+    });
+  </script>
+</body>
+</html>
